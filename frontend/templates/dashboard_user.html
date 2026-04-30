@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillRank — My Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0b1120;
+      --surface: rgba(15,23,42,0.75);
+      --border:  rgba(148,163,184,0.12);
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --accent:  #f59e0b;
+      --success: #10b981;
+      --text:    #f1f5f9;
+      --muted:   #94a3b8;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 32px 16px;
+      background:
+        radial-gradient(ellipse 70% 55% at 10%  5%,  rgba(99,102,241,.30), transparent),
+        radial-gradient(ellipse 60% 50% at 90% 95%,  rgba(16,185,129,.18), transparent),
+        radial-gradient(ellipse 50% 40% at 55% 50%,  rgba(245,158,11,.10), transparent),
+        var(--bg);
+      background-attachment: fixed;
+    }
+
+    /* floating orbs */
+    body::before, body::after {
+      content: ''; position: fixed;
+      border-radius: 50%; filter: blur(90px); opacity: .25;
+      pointer-events: none;
+      animation: drift 16s ease-in-out infinite alternate;
+    }
+    body::before { width: 480px; height: 480px; background: var(--primary); top: -180px; left: -160px; }
+    body::after  { width: 400px; height: 400px; background: var(--success); bottom: -140px; right: -120px; animation-delay: -8s; }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px,20px) scale(1.1); }
+    }
+
+    /* ── Card ── */
+    .profile-card {
+      position: relative; z-index: 1;
+      width: min(520px, 100%);
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(28px) saturate(1.6);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.04) inset,
+        0 40px 100px rgba(0,0,0,.55);
+      overflow: hidden;
+      animation: rise .5s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes rise {
+      from { opacity:0; transform: translateY(32px) scale(.97); }
+      to   { opacity:1; transform: translateY(0)    scale(1); }
+    }
+
+    /* hero strip */
+    .hero {
+      position: relative;
+      height: 120px;
+      background: linear-gradient(135deg, #312e81 0%, #4f46e5 40%, #7c3aed 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,.12), transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(245,158,11,.18), transparent 50%);
+    }
+    .hero-pattern {
+      position: absolute; inset: 0; opacity: .06;
+      background-image: repeating-linear-gradient(
+        45deg, #fff 0, #fff 1px, transparent 0, transparent 50%
+      );
+      background-size: 20px 20px;
+    }
+
+    /* avatar ring */
+    .avatar-wrap {
+      position: absolute;
+      bottom: -44px; left: 50%;
+      transform: translateX(-50%);
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 8px 32px rgba(99,102,241,.5);
+    }
+    .avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%; overflow: hidden;
+      background: var(--bg);
+      border: 3px solid var(--bg);
+    }
+    .avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* body */
+    .card-body { padding: 60px 32px 32px; }
+
+    .user-name {
+      text-align: center;
+      font-size: 22px; font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .user-email {
+      text-align: center;
+      font-size: 14px; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .user-role {
+      display: flex; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .role-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+      background: rgba(99,102,241,.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99,102,241,.3);
+    }
+
+    /* info grid */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .info-item {
+      background: rgba(30,41,59,.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: border-color .18s, transform .18s;
+    }
+    .info-item:hover { border-color: rgba(99,102,241,.4); transform: translateY(-2px); }
+    .info-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .info-val {
+      font-size: 15px; font-weight: 600;
+      word-break: break-word;
+    }
+    .info-val.empty { color: #475569; font-style: italic; }
+
+    /* bio block */
+    .bio-block {
+      background: rgba(30,41,59,.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .bio-block .info-label { margin-bottom: 8px; }
+    .bio-text { font-size: 14px; line-height: 1.7; color: #cbd5e1; }
+    .bio-text.empty { color: #475569; font-style: italic; }
+
+    /* logout */
+    .logout-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 46px;
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 12px;
+      background: rgba(239,68,68,.08);
+      color: #f87171;
+      font: 600 15px/1 'Inter', sans-serif;
+      text-decoration: none;
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+    .logout-btn:hover {
+      background: rgba(239,68,68,.16);
+      border-color: rgba(239,68,68,.45);
+      transform: translateY(-1px);
+    }
+
+    /* join date footer */
+    .join-info {
+      text-align: center; margin-top: 18px;
+      font-size: 12px; color: var(--muted);
+    }
+
+    /* ── Mobile Responsive ── */
+    @media (max-width: 640px) {
+      body {
+        padding: 16px 12px;
+      }
+
+      .profile-card {
+        max-width: 100%;
+        border-radius: 20px;
+      }
+
+      .hero {
+        height: 100px;
+      }
+
+      .avatar-wrap {
+        width: 72px;
+        height: 72px;
+        bottom: -36px;
+      }
+
+      .avatar-inner {
+        border: 3px solid var(--bg);
+      }
+
+      .card-body {
+        padding: 48px 24px 24px;
+      }
+
+      .user-name {
+        font-size: 20px;
+        margin-bottom: 2px;
+      }
+
+      .user-email {
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      .user-role {
+        margin-bottom: 20px;
+      }
+
+      .role-badge {
+        font-size: 11px;
+        padding: 4px 12px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .info-item {
+        padding: 12px 14px;
+        border-radius: 12px;
+      }
+
+      .info-item[style*="grid-column"] {
+        grid-column: span 1 !important;
+      }
+
+      .info-label {
+        font-size: 10px;
+        margin-bottom: 5px;
+      }
+
+      .info-val {
+        font-size: 14px;
+      }
+
+      .bio-block {
+        padding: 14px;
+        margin-bottom: 18px;
+        border-radius: 12px;
+      }
+
+      .bio-text {
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .logout-btn {
+        min-height: 44px;
+        font-size: 14px;
+        border-radius: 10px;
+      }
+
+      .join-info {
+        font-size: 11px;
+        margin-top: 14px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .profile-card {
+        border-radius: 16px;
+      }
+
+      .hero {
+        height: 90px;
+      }
+
+      .avatar-wrap {
+        width: 64px;
+        height: 64px;
+        bottom: -32px;
+      }
+
+      .card-body {
+        padding: 44px 16px 16px;
+      }
+
+      .user-name {
+        font-size: 18px;
+      }
+
+      .user-email {
+        font-size: 12px;
+      }
+
+      .role-badge {
+        font-size: 10px;
+        padding: 3px 10px;
+      }
+
+      .info-grid {
+        gap: 10px;
+      }
+
+      .info-item {
+        padding: 10px 12px;
+      }
+
+      .info-label {
+        font-size: 9px;
+        margin-bottom: 4px;
+      }
+
+      .info-val {
+        font-size: 13px;
+      }
+
+      .bio-block {
+        padding: 12px;
+      }
+
+      .bio-text {
+        font-size: 12px;
+      }
+
+      .logout-btn {
+        min-height: 40px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-card">
+    <!-- Hero banner -->
+    <div class="hero">
+      <div class="hero-pattern"></div>
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <div class="avatar-inner">
+          <img src="{{ user.avatar_url }}" alt="{{ user.name }}'s avatar" loading="eager">
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+      <h1 class="user-name">{{ user.name }}</h1>
+      <p class="user-email">{{ user.email }}</p>
+      <div class="user-role">
+        <span class="role-badge">Registered User</span>
+      </div>
+
+      <!-- Info grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Phone</div>
+          <div class="info-val {% if not user.phone %}empty{% endif %}">
+            {{ user.phone if user.phone else 'Not provided' }}
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Date of Birth</div>
+          <div class="info-val {% if not user.dob %}empty{% endif %}">
+            {{ user.dob if user.dob else 'Not provided' }}
+          </div>
+        </div>
+        <div class="info-item" style="grid-column: span 2;">
+          <div class="info-label">Email Address</div>
+          <div class="info-val">{{ user.email }}</div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="bio-block">
+        <div class="info-label">About Me</div>
+        <p class="bio-text {% if not user.bio %}empty{% endif %}">
+          {{ user.bio if user.bio else 'No bio added yet.' }}
+        </p>
+      </div>
+
+      <!-- Logout -->
+      <a href="/logout" class="logout-btn" id="logout-link">
+        Sign Out
+      </a>
+
+      <p class="join-info">Member since {{ user.created_at }}</p>
+    </div>
+  </div>
+</body>
+</html>
