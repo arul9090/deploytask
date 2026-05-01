@@ -130,3 +130,23 @@ def update_roles(user_id: str, roles: list[str]):
     if result.matched_count == 0:
         return None
     return find_by_id(user_id)
+
+
+def update_profile(user_id: str, data: dict):
+    if not ObjectId.is_valid(user_id):
+        return None
+
+    update_data = {}
+    if "name" in data: update_data["name"] = data["name"].strip()
+    if "phone" in data: update_data["phone"] = data["phone"].strip()
+    if "dob" in data: update_data["dob"] = data["dob"].strip()
+    if "bio" in data: update_data["bio"] = data["bio"].strip()
+
+    if not update_data:
+        return find_by_id(user_id)
+
+    users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": update_data}
+    )
+    return find_by_id(user_id)
