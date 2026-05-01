@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from models import user_model
 from services.auth_service import admin_required, login_required
 
@@ -56,6 +56,27 @@ def profile():
         session.clear()
         return redirect(url_for("auth.login"))
     return render_template("dashboard_user.html", user=user_model.serialize_user(user))
+
+
+@web_bp.post("/profile/update")
+@login_required
+def update_profile():
+    user_id = session["user_id"]
+    data = {
+        "name": request.form.get("name"),
+        "phone": request.form.get("phone"),
+        "dob": request.form.get("dob"),
+        "bio": request.form.get("bio")
+    }
+    
+    updated_user = user_model.update_profile(user_id, data)
+    if updated_user:
+        session["name"] = updated_user.get("name", session.get("name"))
+        flash("Profile updated successfully!", "success")
+    else:
+        flash("Failed to update profile.", "danger")
+        
+    return redirect(url_for("web.profile"))
 
 
 @web_bp.route("/admin/users/<user_id>/toggle-admin", methods=["POST"])
